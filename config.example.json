@@ -1,0 +1,8 @@
+{
+  "forwards": [
+    {
+      "phrase": "The phrase",
+      "to": "email@example.org"
+    }
+  ]
+}

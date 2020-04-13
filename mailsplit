@@ -1,0 +1,30 @@
+#!/usr/bin/env php
+<?php
+
+define('LARAVEL_START', microtime(true));
+
+/*
+|--------------------------------------------------------------------------
+| Register The Auto Loader
+|--------------------------------------------------------------------------
+|
+| Composer provides a convenient, automatically generated class loader
+| for our application. We just need to utilize it! We'll require it
+| into the script here so that we do not have to worry about the
+| loading of any our classes "manually". Feels great to relax.
+|
+*/
+
+require __DIR__.'/vendor/autoload.php';
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+// Init App with name and version
+$app = new Ahc\Cli\Application('Mailsplit', 'v0.1.0');
+
+// Add commands with optional aliases`
+$app->add(new \Karlerss\Mailsplit\Forward());
+$app->add(new \Karlerss\Mailsplit\TestMail());
+
+$app->handle($_SERVER['argv']);

@@ -96,6 +96,6 @@ class Forward extends EmailCommand
     protected function getBasePath(): string
     {
         list($scriptPath) = get_included_files();
-        return preg_replace('/mailsplit/', '', $scriptPath);
+        return preg_replace('/mailsplit$/', '', $scriptPath);
     }
 }

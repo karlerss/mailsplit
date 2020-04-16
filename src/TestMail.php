@@ -5,6 +5,9 @@ namespace Karlerss\Mailsplit;
 
 
 use Ahc\Cli\Application as App;
+use GuzzleHttp\Client;
+use GuzzleHttp\Cookie\CookieJar;
+use Symfony\Component\DomCrawler\Crawler;
 
 class TestMail extends EmailCommand
 {
@@ -16,6 +19,7 @@ class TestMail extends EmailCommand
 
     public function execute()
     {
+        $this->testCalendar();
         $this->testTransport();
         $this->testImap();
     }
@@ -44,5 +48,15 @@ class TestMail extends EmailCommand
         }
     }
 
+    public function testCalendar()
+    {
+        try {
+            $this->authCalendar(getenv('CAL_TEST_URL'));
+            echo "CALENDAR: OK\n";
+        } catch (\Exception $e) {
+            $msg = $e->getMessage();
+            echo "CALENDAR: FAIL ($msg)\n";
+        }
+    }
 
 }

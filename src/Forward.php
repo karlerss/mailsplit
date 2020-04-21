@@ -35,6 +35,7 @@ class Forward extends EmailCommand
                     if (isset($fwd['calendar'])) {
                         $this->addToCalendar($mail, $fwd['calendar']);
                     }
+                    $mailbox->markMailAsUnread($id);
                     $this->writeToDb($id);
                 }
             }
@@ -117,7 +118,7 @@ class Forward extends EmailCommand
                 'show_end_time' => 1,
                 'scheduling' => 0,
                 'description' => $bodyContentMatches[1],
-                'color' => '#96bf48',
+                'color' => '#FFC0CB',
             ],
             'task' => 'event.apply',
             $nonce2->attr('name') => 1,

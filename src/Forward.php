@@ -118,7 +118,7 @@ class Forward extends EmailCommand
                 'show_end_time' => 1,
                 'scheduling' => 0,
                 'description' => $bodyContentMatches[1],
-                'color' => '#FFC0CB',
+                'color' => $calendar['color'] ?? '#FFC0CB',
             ],
             'task' => 'event.apply',
             $nonce2->attr('name') => 1,

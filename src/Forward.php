@@ -14,8 +14,12 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class Forward extends EmailCommand
 {
-    public function __construct(string $name = 'forward', string $desc = '', bool $allowUnknown = false, App $app = null)
-    {
+    public function __construct(
+        string $name = 'forward',
+        string $desc = '',
+        bool $allowUnknown = false,
+        App $app = null
+    ) {
         parent::__construct($name, $desc, $allowUnknown, $app);
     }
 
@@ -31,6 +35,9 @@ class Forward extends EmailCommand
             foreach ($mailIds as $id) {
                 if (!$this->isSent($id)) {
                     $mail = $mailbox->getMail($id);
+                    if(!$this->isExactMatch($mail, $fwd['phrase'])){
+                        continue;
+                    }
                     $this->forward($mail, $fwd['to']);
                     if (isset($fwd['calendar'])) {
                         $this->addToCalendar($mail, $fwd['calendar']);
@@ -40,6 +47,11 @@ class Forward extends EmailCommand
                 }
             }
         }
+    }
+
+    public function isExactMatch(IncomingMail $mail, string $phrase): bool
+    {
+        return strpos($mail->textPlain, $phrase) !== false;
     }
 
     protected function getForwards(): array

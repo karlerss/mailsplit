@@ -38,7 +38,7 @@ class Forward extends EmailCommand
                     if(!$this->isExactMatch($mail, $fwd['phrase'])){
                         continue;
                     }
-                    $this->forward($mail, $fwd['to']);
+//                    $this->forward($mail, $fwd['to']);
                     if (isset($fwd['calendar'])) {
                         $this->addToCalendar($mail, $fwd['calendar']);
                     }

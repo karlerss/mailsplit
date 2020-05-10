@@ -35,12 +35,15 @@ class Forward extends EmailCommand
             foreach ($mailIds as $id) {
                 if (!$this->isSent($id)) {
                     $mail = $mailbox->getMail($id);
-                    if(!$this->isExactMatch($mail, $fwd['phrase'])){
+                    if (!$this->isExactMatch($mail, $fwd['phrase'])) {
                         continue;
                     }
-//                    $this->forward($mail, $fwd['to']);
                     if (isset($fwd['calendar'])) {
-                        $this->addToCalendar($mail, $fwd['calendar']);
+                        try {
+                            $this->addToCalendar($mail, $fwd['calendar']);
+                        } catch (\Exception $e) {
+                            echo $e->getMessage();
+                        }
                     }
                     $mailbox->markMailAsUnread($id);
                     $this->writeToDb($id);
@@ -112,6 +115,17 @@ class Forward extends EmailCommand
         preg_match('/ev: "(.*?)"/', $mail->textPlain, $dateMatches);
         preg_match('/eg: "(\d+:\d+) - (\d+:\d+)"/', $mail->textPlain, $timeMatches);
 
+        $title = $mail->subject;
+
+        if (!isset($dateMatches[1])) {
+            $title = 'KP vigane: ' . $mail->subject;
+            $dateMatches[1] = date('Y-m-d');
+        }
+
+        if (!isset($dateMatches[1]) || !isset($timeMatches[1]) || !isset($timeMatches[2])) {
+            $title = 'Kellaaeg vigane: ' . $mail->subject;
+        }
+
         $isoDate = $dateMatches[1];
         $isoDateParts = explode('-', $isoDate);
         $isoDateParts = array_reverse($isoDateParts);
@@ -119,14 +133,15 @@ class Forward extends EmailCommand
 
         preg_match('/<body>(.*?)<\/body>/s', $mail->textHtml, $bodyContentMatches);
 
+
         $eventParams = [
             'jform' => [
-                'title' => $mail->subject,
+                'title' => $title,
                 'catid' => $calendar['id'],
                 'start_date' => $date,
-                'start_date_time' => $timeMatches[1],
+                'start_date_time' => $timeMatches[1] ?? '20:59',
                 'end_date' => $date,
-                'end_date_time' => $timeMatches[2],
+                'end_date_time' => $timeMatches[2] ?? '21:59',
                 'show_end_time' => 1,
                 'scheduling' => 0,
                 'description' => $bodyContentMatches[1],
